@@ -6,8 +6,6 @@
 #include <cctype>
 #include <map>
 
-using namespace std;
-
 class Compiler {
 	
 private:
@@ -17,24 +15,39 @@ private:
 	int brktCount;
 	std::map<int,std::string> levels;
 	bool runLive;
-
+	std::string code;
+	
 public:
 	
-	Compiler(){
-	
+	Compiler(std::string code){
 		this-> runLive = true;
 		this-> brktCount=0;
+		this->code = code;
+		this->execCode(std::string(),true);
 	}
 	
 	
-	void execCode(std::string code){
+	void execCode(std::string code=NULL, bool useInternal=false){
 	
-		std::cout << "EXEC REACHED " << std::endl;
+	
+		if(useInternal){
+			code = this->code;
+		} else {
+			code = code; }
+	
+		std::cout << "EXEC REACHED " << code << std::endl;
 		
-		if(std::count(code.cbegin(), code.cend(), '[') != std::count(code.cbegin(), code.cend(), ']')){
-			std::cout << "BRAINFK: Fatal Error: Unmatched Brackets []" << std::endl;
+		int lB = std::count(code.cbegin(), code.cend(), '['); 
+		int rB = std::count(code.cbegin(), code.cend(), ']'); 
+		
+		if (lB > rB){
+			std::cout << "BRAINFK: Fatal Error: [" << std::endl;
 			exit(-1);
-		}  
+		} 
+		else if (lB < rB){
+			std::cout << "BRAINFK: Fatal Error: ]" << std::endl;
+			exit(-1);
+		}
 		
 		
 		for (char current : code){
@@ -82,7 +95,9 @@ public:
 					brktCount--;
 					if (brktCount == 0){
 						//execute code in brackets
-						this->execCode(this->levels[this->brktCount]);
+						this->execCode(this->levels[this->brktCount], false);
+						std::cout << this->levels[this->brktCount] << std::endl;
+						
 						this->runLive = true;
 					}
 					else {
@@ -91,7 +106,7 @@ public:
 				} 
 				else {
 					this->levels[this->brktCount] += current;
-					std::cout << this->levels[this->brktCount+1];
+					//std::cout << this->levels[this->brktCount+1];
 				}
 			}
 		}
@@ -119,7 +134,6 @@ int main(int argc, char** argv){
 	}
 	else if (argument == "-s"){
 		code = argv[2];
-		std::cout << code << std::endl;
 	}
 	else if (argument == "-h" || argument == "--help"){
 		std::cout << std::endl << "BRAINF COMPILER HELP:" << std::endl << std::endl;
@@ -134,11 +148,12 @@ int main(int argc, char** argv){
 	}
 	else {
 		std::cout << "BRAINF: FATAL ERROR: Incorrect format, try BRAINF --help" << std::endl;
+		return -1;
 	}
 	
 	
-	auto _c = new Compiler();
-	_c->execCode(code);
+	Compiler compiler(code);
+	return 0;
 }
 
 
