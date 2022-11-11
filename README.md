@@ -31,3 +31,11 @@ BF --file main.bf
 ```
 
 will run the contents of the file ```main.bf``` .
+
+## Download
+
+Either:
+
+- Download the code and compile for yourself (make sure to see liscneing)
+- Go to the releases section (below about) to find the latest release
+- Go to the releases folder to find a specific version of the compiler
